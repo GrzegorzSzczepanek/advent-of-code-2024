@@ -1,13 +1,11 @@
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <iterator>
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <vector>
-/*#include <tuple>*/
 
 /*std::tuple<std::string, std::string> split_string(text std::string) {*/
 /*	return*/
@@ -92,19 +90,16 @@ std::vector<std::string> split_string(const std::string &str,
   return tokens;
 }
 
-void bubble_sort(int arr[], int len) {
-  for (int i = 0; i < len; ++i) {
-    for (int j = i + 1; j < len; ++j) {
-      if (arr[i] > arr[j]) {
-        arr[i] = arr[i] ^ arr[j];
-        arr[j] = arr[i] ^ arr[j];
-        arr[i] = arr[i] ^ arr[j];
+void bubble_sort(std::vector<int> &arr) {
+  int len = arr.size();
+  for (int i = 0; i < len - 1; ++i) {
+    for (int j = 0; j < len - i - 1; ++j) {
+      if (arr[j] > arr[j + 1]) {
+        std::swap(arr[j], arr[j + 1]); // Use std::swap for swapping
       }
     }
   }
 }
-
-/*int std::vector<std::string> */
 
 void create_arrays(const std::vector<std::string> &lines,
                    std::vector<int> &arrLeft, std::vector<int> &arrRight) {
@@ -113,8 +108,7 @@ void create_arrays(const std::vector<std::string> &lines,
       continue;
     }
 
-    std::vector<std::string> numbers =
-        split_string(line, " "); // Split on any whitespace
+    std::vector<std::string> numbers = split_string(line, " ");
 
     if (numbers.size() != 2) {
       std::cerr << "Invalid line format: " << line << std::endl;
@@ -129,15 +123,36 @@ void create_arrays(const std::vector<std::string> &lines,
       continue;
     }
   }
+}
 
-  // Print the arrays
-  for (size_t j = 0; j < arrLeft.size(); ++j) {
-    std::cout << "left[" << j << "]: " << arrLeft[j] << std::endl;
+int part1(std::vector<int> left, std::vector<int> right) {
+  int len = left.size();
+  int result = 0;
+  for (int i = 0; i < len; ++i) {
+    result += abs(left[i] - right[i]);
+  }
+  return result;
+}
+
+int count_occurences(std::vector<int> &vec, int item) {
+
+  int count = 0;
+  for (int i = 0; i < vec.size(); ++i) {
+    if (vec[i] == item) {
+      count++;
+    }
+  }
+  return count;
+}
+
+int part2(std::vector<int> left, std::vector<int> right) {
+  int result = 0;
+
+  for (int i = 0; i < left.size(); ++i) {
+    result += left[i] * count_occurences(right, left[i]);
   }
 
-  for (size_t j = 0; j < arrRight.size(); ++j) {
-    std::cout << "right[" << j << "]: " << arrRight[j] << std::endl;
-  }
+  return result;
 }
 
 int main() {
@@ -149,17 +164,30 @@ int main() {
     return 1;
   }
 
-  // Split the file content into lines
   std::vector<std::string> lines = split_string(file_content, "\n");
 
-  // Remove any empty strings
   lines.erase(std::remove(lines.begin(), lines.end(), ""), lines.end());
 
-  // Create vectors for left and right arrays
   std::vector<int> arrLeft;
   std::vector<int> arrRight;
 
   create_arrays(lines, arrLeft, arrRight);
+  bubble_sort(arrLeft);
+  bubble_sort(arrRight);
+
+  for (size_t j = 0; j < arrLeft.size(); ++j) {
+    std::cout << "left[" << j << "]: " << arrLeft[j] << std::endl;
+  }
+
+  for (size_t j = 0; j < arrRight.size(); ++j) {
+    std::cout << "right[" << j << "]: " << arrRight[j] << std::endl;
+  }
+
+  int result = part1(arrLeft, arrRight);
+  std::cout << "Results: " << result << std::endl;
+
+  int result2 = part2(arrLeft, arrRight);
+  std::cout << "Results: " << result2 << std::endl;
 
   return 0;
 }
