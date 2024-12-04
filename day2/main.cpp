@@ -185,9 +185,40 @@ int part1(std::string &input_filepath) {
   return safe;
 }
 
+int part2(std::string &input_filepath) {
+  std::string content = read_file(input_filepath);
+  int safe = 0;
+  std::vector<std::string> reports = split_string(content, "\n");
+
+  for (auto report : reports) {
+    std::vector<std::string> report_levels_str = split_string(report, " ");
+    std::vector<int> report_levels = create_int_vector(report_levels_str);
+    if (is_vector_safe(report_levels)) {
+      safe++;
+    } else {
+      for (size_t i = 0; i < report_levels.size(); ++i) {
+        std::vector<int> temp_vec;
+        for (size_t j = 0; j < report_levels.size(); ++j) {
+          if (j != i) {
+            temp_vec.push_back(report_levels[j]);
+          }
+        }
+
+        if (is_vector_safe(temp_vec)) {
+          safe++;
+          break;
+        }
+      }
+    }
+  }
+
+  return safe;
+}
+
 int main() {
   std::string filepath = "./input.txt";
 
   print(part1(filepath));
+  print(part2(filepath));
   return 0;
 }
