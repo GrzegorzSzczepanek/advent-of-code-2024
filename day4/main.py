@@ -90,6 +90,39 @@ def check_diagonal(puzzle: list[str]) -> int:
     return count
 
 
+def part2(input_file: str) -> int:
+    xmas_count = 0
+    puzzle = read_file(input_file).split("\n")
+
+    xmas_layouts = [
+        "M.S\n.A.\nM.S",
+        "S.M\n.A.\nS.M",
+        "S.S\n.A.\nM.M",
+        "M.M\n.A.\nS.S",
+    ]
+
+    for i in range(1, len(puzzle) - 1):
+        for j in range(1, len(puzzle[0]) - 1):
+            square = (
+                puzzle[i - 1][j - 1]
+                + "."
+                + puzzle[i - 1][j + 1]
+                + "\n"
+                + "."
+                + puzzle[i][j]
+                + "."
+                + "\n"
+                + puzzle[i + 1][j - 1]
+                + "."
+                + puzzle[i + 1][j + 1]
+            )
+
+            if square in xmas_layouts:
+                xmas_count += 1
+
+    return xmas_count
+
+
 def part1(input_file: str) -> int:
     xmas_count = 0
 
@@ -104,10 +137,10 @@ def part1(input_file: str) -> int:
 
 def main():
     input_file = "./input.txt"
-    print("\n### part 1 ###")
-    print(part1(input_file))
-    # print("\n### part 2 ###")
-    # print(part2(input_file))
+    # print("\n### part 1 ###")
+    # print(part1(input_file))
+    print("\n### part 2 ###")
+    print(part2(input_file))
 
 
 if __name__ == "__main__":
