@@ -18,38 +18,39 @@ def transpose_2d(lst: list):
 
 def pad_row(row: list):
     while len(row) < 6:
-        row.append(None)
+        row.append("~")
     return row
 
 
 def diagonals_to_rows(puzzle: list):
-    """
-    It works under assumption that list has square n x n shape.
-    """
     new_lst = []
 
-    for i in range(0, len(puzzle[0])):
+    for i in range(len(puzzle)):
         diagonal = []
-        for j in range(i, len(puzzle[0])):
-            if i != 0:
-                if j < len(puzzle[0]) - 1:
-                    diagonal.append(puzzle[j][j + 1])
-                else:
-                    break
-            else:
-                diagonal.append(puzzle[j][j])
+        for j in range(len(puzzle)):
+            if i + j < len(puzzle[0]):
+                diagonal.append(puzzle[j][i + j])
+        new_lst.append(pad_row(diagonal))
 
+    for i in range(1, len(puzzle)):
+        diagonal = []
+        for j in range(len(puzzle) - i):
+            diagonal.append(puzzle[i + j][j])
         new_lst.append(pad_row(diagonal))
 
     for i in range(len(puzzle[0])):
         diagonal = []
-        for j in range(i + 1):
+        for j in range(len(puzzle)):
             if i - j >= 0:
                 diagonal.append(puzzle[j][i - j])
         new_lst.append(pad_row(diagonal))
-    # pprint(new_lst)
 
-    # print(new_lst)
+    for i in range(1, len(puzzle)):
+        diagonal = []
+        for j in range(len(puzzle) - i):
+            diagonal.append(puzzle[i + j][len(puzzle[0]) - 1 - j])
+        new_lst.append(pad_row(diagonal))
+
     return new_lst
 
 
@@ -77,11 +78,25 @@ def check_vertical(puzzle: list[str]) -> int:
     return count
 
 
+def check_diagonal(puzzle: list[str]) -> int:
+    count = 0
+
+    diagonals = diagonals_to_rows(puzzle)
+    diagonals = ["".join(diagonal) for diagonal in diagonals]
+    pprint(diagonals)
+
+    count = check_horizontal(diagonals)
+
+    return count
+
+
 def part1(input_file: str) -> int:
     xmas_count = 0
 
     puzzle = read_file(input_file).split("\n")
-    # xmas_count += check_horizontal(puzzle) + check_vertical(puzzle)
+    xmas_count += (
+        check_horizontal(puzzle) + check_vertical(puzzle) + check_diagonal(puzzle)
+    )
     pprint(diagonals_to_rows(puzzle))
 
     return xmas_count
