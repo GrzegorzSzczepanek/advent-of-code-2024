@@ -1,12 +1,8 @@
-from math import ceil as math_ceil
-
-
 def read_file(filepath: str) -> str:
     return open(filepath, "r").read().strip()
 
 
 def prepare_rules(rules: str) -> list:
-    ruleset = rules.strip().split("\n")
     new_ruleset: list[tuple[str, str]] = []
     for rule in rules.strip().split("\n"):
         new_ruleset.append((rule.split("|")[0], rule.split("|")[1]))
@@ -61,7 +57,6 @@ def part1(input_file: str) -> int:
         if is_valid_update(row, ruleset):
             middle_index = len(row) // 2
             middle_page = int(row[middle_index])
-            print(f"Valid update: {row} -> Middle page: {middle_page}")
             result += middle_page
         else:
             print(f"Invalid update: {row}")
